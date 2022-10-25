@@ -1,6 +1,7 @@
 package test;
 
 import com.codeborne.selenide.logevents.SelenideLogger;
+import data.Notification;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.val;
 import org.junit.jupiter.api.AfterAll;
@@ -13,6 +14,7 @@ import page.PaymentMethod;
 import page.DebitPage;
 
 import static com.codeborne.selenide.Selenide.open;
+import static data.Notification.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DebitTest {
@@ -40,10 +42,10 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getApprovedCard());
-        debitPage.waitNotificationOk();
+        debitPage.waitNotificationOk(cardNumberOkText);
         val expected = DataHelper.getApprovedCardStatus();
         val actual = SqlHelper.getDebitStatus();
-         assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
     }
 
@@ -54,7 +56,7 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getDeclinedCard());
-        debitPage.waitNotificationError();
+        debitPage.waitNotificationError(cardNumberErrorText);
         val expected = DataHelper.getDeclinedCardStatus();
         val actual = SqlHelper.getDebitStatus();
         assertEquals(expected, actual);
@@ -68,7 +70,9 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getShortNameInOwnerApprovedCard());
-        debitPage.waitNotificationError();
+        debitPage.waitNotificationError(cardNumberErrorText);
+        assertEquals("Ошибка! Банк отказал в проведении операции.", Notification.cardNumberErrorText);
+
     }
 
 
@@ -78,7 +82,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getInvalidMonthApprovedCard());
-        assertEquals("Неверно указан срок действия карты", debitPage.getInputInvalid());
+        debitPage.fieldMonthError(invalidDateText);
+        assertEquals("Неверно указан срок действия карты", Notification.invalidDateText);
     }
 
 
@@ -88,7 +93,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getBygoneMonthApprovedCard());
-        assertEquals("Неверно указан срок действия карты", debitPage.getInputInvalid());
+        debitPage.fieldMonthError(invalidDateText);
+        assertEquals("Неверно указан срок действия карты", Notification.invalidDateText);
     }
 
 
@@ -98,7 +104,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getIncompleteField());
-        assertEquals("Неверный формат", debitPage.getInputInvalid());
+        debitPage.fieldMonthError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -108,7 +115,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getCharactersInFieldOwnerApprovedCard());
-        assertEquals("Неверный формат", debitPage.getInputInvalid());
+        debitPage.fieldNameError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -118,7 +126,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getCyrillicInApprovedCard());
-        assertEquals("Неверный формат", debitPage.getInputInvalid());
+        debitPage.fieldNameError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -128,7 +137,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getBygoneYearApprovedCard());
-        assertEquals("Истёк срок действия карты", debitPage.getInputInvalid());
+        debitPage.fieldYearError(expiryDateText);
+        assertEquals("Истёк срок действия карты", Notification.expiryDateText);
     }
 
 
@@ -138,7 +148,9 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getInvalidYearApprovedCard());
-        debitPage.getInputInvalid();
+        debitPage.fieldYearError(expiryDateText);
+        assertEquals("Истёк срок действия карты", Notification.expiryDateText);
+
     }
 
 
@@ -148,7 +160,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getNonExistentCard());
-        debitPage.getCardIsIncorrect();
+        debitPage.waitNotificationError(cardNumberErrorText);
+        assertEquals("Ошибка! Банк отказал в проведении операции.", Notification.cardNumberErrorText);
     }
 
 
@@ -158,7 +171,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getInvalidCvc());
-        debitPage.getInputInvalid();
+        debitPage.fieldCVVError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -168,7 +182,9 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getInvalidCvc2());
-        debitPage.getInputInvalid();
+        debitPage.fieldCVVError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
+
     }
 
 
@@ -178,7 +194,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getInvalidCard());
-        debitPage.getInputInvalid();
+        debitPage.getCardIsIncorrect(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -188,7 +205,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getEmptyFieldMonth());
-        debitPage.getInputInvalid();
+        debitPage.fieldMonthError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -198,7 +216,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getEmptyFieldYear());
-        debitPage.getInputInvalid();
+        debitPage.fieldYearError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -208,7 +227,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getEmptyFieldNumber());
-        debitPage.getInputInvalid();
+        debitPage.getCardIsIncorrect(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -218,7 +238,8 @@ public class DebitTest {
         payment.openDebitPage();
         val debitPage = new DebitPage();
         debitPage.fillData(DataHelper.getEmptyFieldName());
-        debitPage.getInputInvalid();
+        debitPage.fieldNameError(filledText);
+        assertEquals("Поле обязательно для заполнения", Notification.filledText);
     }
 
 }

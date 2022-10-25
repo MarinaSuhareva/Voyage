@@ -41,7 +41,7 @@ public class DataHelper {
         return "4444 4444 4444 4441";
     }
 
-    private static String getDeclinedCardNumber() {
+    public static String getDeclinedCardNumber() {
         return "4444 4444 4444 4442";
     }
 

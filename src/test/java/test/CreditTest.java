@@ -1,7 +1,9 @@
 package test;
 
+
 import com.codeborne.selenide.logevents.SelenideLogger;
 import data.DataHelper;
+import data.Notification;
 import data.SqlHelper;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.val;
@@ -11,6 +13,7 @@ import page.PaymentMethod;
 
 
 import static com.codeborne.selenide.Selenide.open;
+import static data.Notification.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -41,7 +44,7 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getApprovedCard());
-        creditPage.waitNotificationOk();
+        creditPage.waitNotificationOk(cardNumberOkText);
         val expected = DataHelper.getApprovedCardStatus();
         val actual = SqlHelper.getCreditStatus();
         assertEquals(expected, actual);
@@ -55,7 +58,7 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getDeclinedCard());
-        creditPage.waitNotificationError();
+        creditPage.waitNotificationError(cardNumberErrorText);
         val expected = DataHelper.getDeclinedCardStatus();
         val actual = SqlHelper.getCreditStatus();
         assertEquals(expected, actual);
@@ -69,7 +72,9 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getShortNameInOwnerApprovedCard());
-        creditPage.waitNotificationError();
+        creditPage.waitNotificationError(cardNumberErrorText);
+        assertEquals("Ошибка! Банк отказал в проведении операции.", Notification.cardNumberErrorText);
+
     }
 
 
@@ -79,7 +84,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getInvalidMonthApprovedCard());
-        assertEquals("Неверно указан срок действия карты", creditPage.getInputInvalid());
+        creditPage.fieldMonthError(invalidDateText);
+        assertEquals("Неверно указан срок действия карты", Notification.invalidDateText);
     }
 
 
@@ -89,7 +95,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getBygoneMonthApprovedCard());
-        assertEquals("Неверно указан срок действия карты", creditPage.getInputInvalid());
+        creditPage.fieldMonthError(invalidDateText);
+        assertEquals("Неверно указан срок действия карты", Notification.invalidDateText);
     }
 
 
@@ -99,7 +106,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getIncompleteField());
-        assertEquals("Неверный формат", creditPage.getInputInvalid());
+        creditPage.fieldMonthError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -109,7 +117,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getCharactersInFieldOwnerApprovedCard());
-        assertEquals("Неверный формат", creditPage.getInputInvalid());
+        creditPage.fieldNameError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -119,7 +128,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getCyrillicInApprovedCard());
-        assertEquals("Неверный формат", creditPage.getInputInvalid());
+        creditPage.fieldNameError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -129,7 +139,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getBygoneYearApprovedCard());
-        assertEquals("Истёк срок действия карты", creditPage.getInputInvalid());
+        creditPage.fieldYearError(expiryDateText);
+        assertEquals("Истёк срок действия карты", Notification.expiryDateText);
     }
 
 
@@ -139,7 +150,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getInvalidYearApprovedCard());
-        creditPage.getInputInvalid();
+        creditPage.fieldYearError(expiryDateText);
+        assertEquals("Истёк срок действия карты", Notification.expiryDateText);
     }
 
 
@@ -149,7 +161,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getNonExistentCard());
-        creditPage.getCardIsIncorrect();
+        creditPage.waitNotificationError(cardNumberErrorText);
+        assertEquals("Ошибка! Банк отказал в проведении операции.", Notification.cardNumberErrorText);
     }
 
 
@@ -159,7 +172,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getInvalidCvc());
-        creditPage.getInputInvalid();
+        creditPage.fieldCVVError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -169,7 +183,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getInvalidCvc2());
-        creditPage.getInputInvalid();
+        creditPage.fieldCVVError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
     @Test
@@ -178,7 +193,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getInvalidCard());
-        creditPage.getInputInvalid();
+        creditPage.getCardIsIncorrect(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -188,7 +204,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getEmptyFieldMonth());
-        creditPage.getInputInvalid();
+        creditPage.fieldMonthError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -198,7 +215,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getEmptyFieldYear());
-        creditPage.getInputInvalid();
+        creditPage.fieldYearError(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -208,7 +226,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getEmptyFieldNumber());
-        creditPage.getInputInvalid();
+        creditPage.getCardIsIncorrect(wrongFormatText);
+        assertEquals("Неверный формат", Notification.wrongFormatText);
     }
 
 
@@ -218,7 +237,8 @@ public class CreditTest {
         payment.openCreditPage();
         val creditPage = new CreditPage();
         creditPage.fillData(DataHelper.getEmptyFieldName());
-        creditPage.getInputInvalid();
+        creditPage.fieldNameError(filledText);
+        assertEquals("Поле обязательно для заполнения", Notification.filledText);
     }
 
 }
