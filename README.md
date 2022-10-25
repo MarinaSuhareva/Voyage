@@ -1,3 +1,9 @@
+# Документация
+   * [Дипломный проект](https://github.com/netology-code/qa-diploma)
+   * [План автоматизации](https://github.com/MarinaSuhareva/Voyage/blob/master/Documents/Plan.md)
+   * [Отчет по итогам тестирования](https://github.com/MarinaSuhareva/Voyage/blob/master/Documents/Report.md)
+   * [ Отчет по итогам автоматизации](https://github.com/MarinaSuhareva/Voyage/blob/master/Documents/Summary.md)
+   
 # Запуск автотестов
 
 ### Шаги воспроизведения
