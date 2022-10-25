@@ -27,7 +27,10 @@ ________________________________________________________________________________
  * Успешных: 26 (72,22%)
  * Неуспешных: 10 (27,78%)
 
+<img width="1118" alt="allure:36" src="https://user-images.githubusercontent.com/102742373/197786538-1b6cb5c3-28d2-471f-8853-5425c0422e6c.png">
 
+<img width="900" alt="debittest36" src="https://user-images.githubusercontent.com/102742373/197786576-e98344c6-80b5-4b20-9e95-98fdf288192e.png">
+<img width="900" alt="credittest:36" src="https://user-images.githubusercontent.com/102742373/197786644-1b2c089a-949e-494a-9aa2-7d2802d3147e.png">
 
 ![](../../../Desktop/allure:36.png)
 ![](../../../Desktop/debittest36.png)
